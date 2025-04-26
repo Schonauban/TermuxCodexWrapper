@@ -236,7 +236,14 @@ case "$1" in
     cat "$TMP_MD"
     echo
     echo "=== Démarrage d'une session interactive (continue '$NAME') ==="
-    exec script -q /dev/null -c "codex --project-doc \"$TMP_MD\""
+    # Démarrage d'une session interactive avec l'historique récupéré
+    if [ "$(uname)" = "Darwin" ]; then
+      # macOS: script n'accepte pas l'option -c
+      exec script -q /dev/null codex --project-doc "$TMP_MD"
+    else
+      # Linux / Termux: utiliser -c pour exécuter la commande
+      exec script -q /dev/null -c "codex --project-doc \"$TMP_MD\""
+    fi
     ;;
 
   rename)
