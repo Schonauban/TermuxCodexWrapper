@@ -16,8 +16,14 @@ if [ -z "$OPENAI_API_KEY" ]; then
   exit 1
 fi
 
-# Base directory for user sessions
-SESSION_DIR="$HOME/.codex-sessions"
+# Determine platform-specific session directory
+if [ -n "$TERMUX_VERSION" ]; then
+  # Termux on Android
+  SESSION_DIR="$HOME/.codex-sessions"
+else
+  # macOS or Linux
+  SESSION_DIR="$HOME/.TermuxCodexWrapper/sessions"
+fi
 mkdir -p "$SESSION_DIR"
 
 # Plugin session variable (used by export command)

@@ -8,10 +8,13 @@
     ```bash
     git clone git@github.com:VOTRE_UTILISATEUR/TermuxCodexWrapper.git ~/.shortcuts
     ```
- 2. Rendez le script principal exécutable :
-    ```bash
-    chmod +x ~/.shortcuts/chatgpt
-    ```
+2. Rendez le script principal exécutable et ajoutez-le à votre PATH :
+   ```bash
+   chmod +x ~/.shortcuts/chatgpt
+   # Sur Linux/macOS
+   mkdir -p ~/bin
+   ln -sf ~/.shortcuts/chatgpt ~/bin/chatgpt
+   ```
 3. Lancez l'installateur pour configurer votre clé API et installer les dépendances :
    ```bash
    bash ~/.shortcuts/install.sh
@@ -23,6 +26,10 @@
     ```bash
     source ~/.bashrc
     ```
+   
+   Note: Sur macOS ou Linux, les sessions seront enregistrées dans
+   `~/.TermuxCodexWrapper/sessions`. Sur Termux (Android), elles restent
+   dans `~/.codex-sessions`.
  5. Ajoutez le widget à l’écran d’accueil Android :
     1. Appuyez longuement sur votre écran d’accueil
     2. Sélectionnez **Widgets** → **Termux Widget**

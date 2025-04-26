@@ -26,6 +26,10 @@ fi
 WRAPPER_DIR="$HOME/.codex-wrapper"
 echo "Création du dossier wrapper: $WRAPPER_DIR"
 mkdir -p "$WRAPPER_DIR"
+# Créer dossier de sessions pour macOS/Linux
+SESS_DIR="$HOME/.TermuxCodexWrapper/sessions"
+echo "Création du dossier de sessions: $SESS_DIR"
+mkdir -p "$SESS_DIR"
 
 # Copier le script chatgpt
 SCRIPT_SRC="$(dirname "$0")/chatgpt"
