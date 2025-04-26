@@ -12,10 +12,10 @@
     ```bash
     chmod +x ~/.shortcuts/chatgpt
     ```
- 3. Lancez l'installateur pour configurer votre clé API :
-    ```bash
-    ~/.shortcuts/install.sh
-    ```
+3. Lancez l'installateur pour configurer votre clé API et installer les dépendances :
+   ```bash
+   bash ~/.shortcuts/install.sh
+   ```
     - Ce script vous demandera votre **OpenAI API Key**
     - Il la stockera dans `~/.shortcuts/.env` (ignoré par Git)
     - Il ajoutera également l’export dans votre `~/.bashrc` pour chargement automatique

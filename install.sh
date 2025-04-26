@@ -12,6 +12,27 @@ echo "=== Installation de TermuxCodexWrapper pour Termux ==="
 # Ensure shortcuts directory exists
 mkdir -p "$SHORTCUTS_DIR"
 
+# Install dependencies if missing
+echo "Vérification des dépendances..."
+# Install Codex CLI
+if ! command -v codex >/dev/null 2>&1; then
+  echo "Codex CLI introuvable. Installation en cours..."
+  # Ensure npm (Node.js) is available
+  if ! command -v npm >/dev/null 2>&1; then
+    echo "npm introuvable. Installation de Node.js via pkg..."
+    pkg install nodejs -y
+  fi
+  echo "Installation de @openai/codex via npm..."
+  npm install -g @openai/codex
+  echo "Codex CLI installé."
+fi
+# Install Termux widget dependencies
+if ! pkg list-installed | grep -q termux-widget; then
+  echo "Installation de termux-widget et termux-api..."
+  pkg install termux-widget termux-api -y
+fi
+echo "Dépendances configurées."
+
 # Prompt for OpenAI API key
 read -p "Entrez votre clé OpenAI (non partagée, stockée en local): " api_key
 if [ -z "$api_key" ]; then
