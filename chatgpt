@@ -1,8 +1,20 @@
 #!/data/data/com.termux/files/usr/bin/env bash
 # Wrapper for managing Codex chat sessions
 # Load environment for API key
+# Load shell configuration
 [ -f "$HOME/.profile" ] && source "$HOME/.profile"
 [ -f "$HOME/.bashrc" ]  && source "$HOME/.bashrc"
+
+# Load OpenAI API key from local env if present
+ENV_FILE="$HOME/.shortcuts/.env"
+[ -f "$ENV_FILE" ] && source "$ENV_FILE"
+
+# Verify API key
+if [ -z "$OPENAI_API_KEY" ]; then
+  echo "Erreur: OPENAI_API_KEY n'est pas définie."
+  echo "Exécutez '$HOME/.shortcuts/install.sh' pour configurer votre clé OpenAI."
+  exit 1
+fi
 
 # Base directory for user sessions
 SESSION_DIR="$HOME/.codex-sessions"
