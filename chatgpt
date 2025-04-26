@@ -208,49 +208,19 @@ case "$1" in
       exit 1
     fi
     mkdir -p "$TARGET"
-    # Record existing global sessions
-    existing=()
-    if [ -d "$GLOBAL_SESS_DIR" ]; then
-      if command -v mapfile >/dev/null 2>&1; then
-        mapfile -t existing < <(ls -A "$GLOBAL_SESS_DIR")
-      else
-        while IFS= read -r e; do
-          existing+=("$e")
-        done < <(ls -A "$GLOBAL_SESS_DIR")
-      fi
-    fi
-
     echo "Démarrage de la nouvelle session '$NAME'..."
     codex
-
-    # Find new session file
-    latest=()
+    # Locate the most recent session file in the global sessions directory
     if [ -d "$GLOBAL_SESS_DIR" ]; then
-      if command -v mapfile >/dev/null 2>&1; then
-        mapfile -t latest < <(ls -A "$GLOBAL_SESS_DIR")
-      else
-        while IFS= read -r f; do
-          latest+=("$f")
-        done < <(ls -A "$GLOBAL_SESS_DIR")
+      latest_file=$(ls -t "$GLOBAL_SESS_DIR"/*.json 2>/dev/null | head -n1)
+      if [ -n "$latest_file" ]; then
+        mv "$latest_file" "$TARGET/rollout.json"
+        echo "Session '$NAME' enregistrée dans $TARGET."
+        exit 0
       fi
     fi
-    new_files=()
-    for f in "${latest[@]}"; do
-      found=0
-      for e in "${existing[@]}"; do
-        [ "$e" = "$f" ] && found=1 && break
-      done
-      [ "$found" -eq 0 ] && new_files+=("$f")
-    done
-    if [ "${#new_files[@]}" -eq 1 ]; then
-      mv "$GLOBAL_SESS_DIR/${new_files[0]}" "$TARGET/rollout.json"
-      echo "Session '$NAME' enregistrée dans $TARGET."
-      exit 0
-    else
-      echo "Erreur: impossible de localiser le fichier de session généré."
-      [ "${#new_files[@]}" -gt 1 ] && echo "Nouveaux fichiers: ${new_files[*]}"
-      exit 1
-    fi
+    echo "Erreur: impossible de localiser le fichier de session généré."
+    exit 1
     ;;
 
   open)
