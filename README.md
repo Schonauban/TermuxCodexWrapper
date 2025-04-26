@@ -1,12 +1,12 @@
- # chatgpt Termux Widget Wrapper
+ # TermuxCodexWrapper
 
  > Wrapper Bash pour lancer et gérer des sessions OpenAI Codex (ChatGPT) dans Termux via un widget Android.
 
  ## Installation
 
- 1. Clonez ce dépôt dans votre répertoire Termux shortcuts :
+ 1. Clonez ce dépôt **TermuxCodexWrapper** dans votre répertoire Termux shortcuts :
     ```bash
-    git clone <URL> ~/.shortcuts
+    git clone git@github.com:VOTRE_UTILISATEUR/TermuxCodexWrapper.git ~/.shortcuts
     ```
  2. Rendez le script principal exécutable :
     ```bash
@@ -43,10 +43,10 @@
 
  ## Pousser sur votre dépôt Git
 
- Après avoir cloné et personnalisé :
+ Après avoir cloné et personnalisé **TermuxCodexWrapper** :
  ```bash
  cd ~/.shortcuts
- git remote add origin git@github.com:VOTRE_UTILISATEUR/votre-repo.git
+ git remote add origin git@github.com:VOTRE_UTILISATEUR/TermuxCodexWrapper.git
  git branch -M main
  git push -u origin main
  ```

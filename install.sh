@@ -1,5 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/env bash
-# Installation script for chatgpt Termux widget wrapper
+# Installation script for TermuxCodexWrapper (Termux widget)
 set -e
 
 # Directory of the widget scripts
@@ -7,7 +7,7 @@ SHORTCUTS_DIR="$HOME/.shortcuts"
 ENV_FILE="$SHORTCUTS_DIR/.env"
 
 echo
-echo "=== Installation du widget ChatGPT pour Termux ==="
+echo "=== Installation de TermuxCodexWrapper pour Termux ==="
 
 # Ensure shortcuts directory exists
 mkdir -p "$SHORTCUTS_DIR"
