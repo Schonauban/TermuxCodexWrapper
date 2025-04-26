@@ -29,8 +29,11 @@ git add .
 git commit -m "Publish TermuxCodexWrapper to GitHub" || true
 # Add or update remote with token for push
 REMOTE_URL_WITH_TOKEN="https://$GITHUB_TOKEN@github.com/$GITHUB_USER/$REPO_NAME.git"
+# Add or update remote with token for push
 git remote remove origin 2>/dev/null || true
 git remote add origin "$REMOTE_URL_WITH_TOKEN"
+# Ensure main branch exists and is current
+git branch -M main
 
 echo "Pushing main branch..."
 git push -u origin main
