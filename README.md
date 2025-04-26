@@ -40,6 +40,18 @@
  chatgpt duplicate SRC DST   # Duplique une session
  chatgpt export [NOM]        # Exporte le script dans une session dédiée
  ```
+  
+### macOS
+Pour installer la version macOS :
+```bash
+bash ~/.shortcuts/install_macos.sh
+```
+Ce script :
+  - Installe Homebrew, Node.js et le CLI Codex
+  - Crée un dossier `~/.codex-wrapper` et copie le script
+  - Ajoute un raccourci dans `~/bin/chatgpt`
+  - Configure votre clé OpenAI dans `~/.codex-wrapper/.env`
+  - Met à jour votre `~/.bash_profile` ou `~/.zshrc`
 
  ## Pousser sur votre dépôt Git
 
