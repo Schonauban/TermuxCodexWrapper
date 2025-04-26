@@ -1,0 +1,273 @@
+#!/data/data/com.termux/files/usr/bin/env bash
+# Wrapper for managing Codex chat sessions
+# Load environment for API key
+[ -f "$HOME/.profile" ] && source "$HOME/.profile"
+[ -f "$HOME/.bashrc" ]  && source "$HOME/.bashrc"
+
+# Base directory for user sessions
+SESSION_DIR="$HOME/.codex-sessions"
+mkdir -p "$SESSION_DIR"
+
+# Plugin session variable (used by export command)
+PLUGIN_SESSION="codexsessionplugin.v1"
+
+# Interactive menu when no arguments are provided
+function interactive_menu() {
+  while true; do
+    # Build list of existing sessions
+    mapfile -t sessions < <(ls -1 "$SESSION_DIR" 2>/dev/null)
+    echo "=== Gestion des sessions Codex ==="
+    # List sessions numbered
+    for i in "${!sessions[@]}"; do
+      echo "  $((i+1))) ${sessions[i]}"
+    done
+    echo
+    echo "n) Nouvelle session"
+    echo "q) Quitter"
+    echo "r<num>) Renommer une session"
+    echo "s<num>) Supprimer une session"
+    read -p "Choisissez une option: " choice
+    case "$choice" in
+      n)
+        read -p "Nom de la nouvelle session (vide pour timestamp): " name
+        exec "$0" new "$name"
+        ;;
+      q)
+        exit 0
+        ;;
+      r[0-9]*)
+        num=${choice#r}
+        if (( num >= 1 && num <= ${#sessions[@]} )); then
+          old=${sessions[num-1]}
+          read -p "Nouveau nom pour la session '$old': " new
+          "$0" rename "$old" "$new"
+        else
+          echo "Numéro de session invalide."
+        fi
+      ;;
+      s[0-9]*)
+        num=${choice#s}
+        if (( num >= 1 && num <= ${#sessions[@]} )); then
+          sel=${sessions[num-1]}
+          "$0" delete "$sel"
+        else
+          echo "Numéro de session invalide."
+        fi
+        ;;
+      [0-9]*)
+        if (( choice >= 1 && choice <= ${#sessions[@]} )); then
+          sel=${sessions[choice-1]}
+          exec "$0" open "$sel"
+        else
+          echo "Numéro invalide."
+        fi
+        ;;
+      *)
+        echo "Choix invalide."
+        ;;
+    esac
+    echo
+  done
+}
+
+# Codex default sessions directory
+GLOBAL_SESS_DIR="$HOME/.codex/sessions"
+
+# Override interactive_menu to ensure updated session list and quit action
+function interactive_menu() {
+  while true; do
+    # Build list of existing sessions
+    mapfile -t sessions < <(ls -1 "$SESSION_DIR" 2>/dev/null)
+    echo "=== Gestion des sessions Codex ==="
+    # List sessions numbered
+    for i in "${!sessions[@]}"; do
+      echo "  $((i+1))) ${sessions[i]}"
+    done
+    echo
+    echo "n) Nouvelle session"
+    echo "q) Quitter"
+    echo "r<num>) Renommer une session"
+    echo "s<num>) Supprimer une session"
+    read -p "Choisissez une option: " choice
+    case "$choice" in
+      n)
+        read -p "Nom de la nouvelle session (vide pour timestamp): " name
+        exec "$0" new "$name"
+        ;;
+      q)
+        exit 0
+        ;;
+      r[0-9]*)
+        num=${choice#r}
+        if (( num >= 1 && num <= ${#sessions[@]} )); then
+          old=${sessions[num-1]}
+          read -p "Nouveau nom pour la session '$old': " new
+          "$0" rename "$old" "$new"
+        else
+          echo "Numéro de session invalide."
+        fi
+        ;;  
+      s[0-9]*)
+        num=${choice#s}
+        if (( num >= 1 && num <= ${#sessions[@]} )); then
+          sel=${sessions[num-1]}
+          "$0" delete "$sel"
+        else
+          echo "Numéro de session invalide."
+        fi
+        ;;  
+      [0-9]*)
+        if (( choice >= 1 && choice <= ${#sessions[@]} )); then
+          sel=${sessions[choice-1]}
+          exec "$0" open "$sel"
+        else
+          echo "Numéro invalide."
+        fi
+        ;;
+      *)
+        echo "Choix invalide."
+        ;;
+    esac
+    echo
+  done
+}
+
+function usage() {
+  cat << EOF
+Usage: $(basename "$0") COMMAND [ARGS...]
+
+Commands:
+  list
+      List existing sessions.
+  new [NAME]
+      Create a new session (optional NAME, default timestamp).
+  open NAME
+      Resume and continue a saved session interactively.
+  rename OLD_NAME NEW_NAME
+      Rename a session.
+  delete NAME
+      Delete a session.
+  duplicate OLD_NAME NEW_NAME
+      Duplicate a session.
+EOF
+}
+case "$1" in
+  "")
+    interactive_menu
+    ;;
+  list)
+    echo "Sessions existantes:"
+    if [ -d "$SESSION_DIR" ]; then
+      for d in "$SESSION_DIR"/*/; do
+        [ -d "$d" ] && echo "- $(basename "$d")"
+      done
+    fi
+    echo
+    usage
+    exit 0
+    ;;
+
+  new)
+    NAME="$2"
+    [ -z "$NAME" ] && NAME=$(date '+%Y%m%d%H%M%S')
+    TARGET="$SESSION_DIR/$NAME"
+    if [ -e "$TARGET" ]; then
+      echo "Erreur: la session '$NAME' existe déjà."
+      exit 1
+    fi
+    mkdir -p "$TARGET"
+    # Record existing global sessions
+    existing=()
+    [ -d "$GLOBAL_SESS_DIR" ] && mapfile -t existing < <(ls -A "$GLOBAL_SESS_DIR")
+
+    echo "Démarrage de la nouvelle session '$NAME'..."
+    codex
+
+    # Find new session file
+    latest=()
+    [ -d "$GLOBAL_SESS_DIR" ] && mapfile -t latest < <(ls -A "$GLOBAL_SESS_DIR")
+    new_files=()
+    for f in "${latest[@]}"; do
+      found=0
+      for e in "${existing[@]}"; do
+        [ "$e" = "$f" ] && found=1 && break
+      done
+      [ "$found" -eq 0 ] && new_files+=("$f")
+    done
+    if [ "${#new_files[@]}" -eq 1 ]; then
+      mv "$GLOBAL_SESS_DIR/${new_files[0]}" "$TARGET/rollout.json"
+      echo "Session '$NAME' enregistrée dans $TARGET."
+      exit 0
+    else
+      echo "Erreur: impossible de localiser le fichier de session généré."
+      [ "${#new_files[@]}" -gt 1 ] && echo "Nouveaux fichiers: ${new_files[*]}"
+      exit 1
+    fi
+    ;;
+
+  open)
+    NAME="$2"
+    JSON_FILE="$SESSION_DIR/$NAME/rollout.json"
+    if [ -z "$NAME" ] || [ ! -f "$JSON_FILE" ]; then
+      echo "Erreur: session '$NAME' non trouvée ou sans historique."
+      exit 1
+    fi
+    echo "=== Historique de la session '$NAME' ==="
+    TMP_MD="$SESSION_DIR/$NAME/history_$(date +%s).md"
+    {
+      current_role=""
+      while IFS= read -r line; do
+        if [[ $line =~ \"role\"[[:space:]]*:[[:space:]]*\"(user|assistant)\" ]]; then
+          current_role="${BASH_REMATCH[1]}"
+        elif [[ $line =~ \"text\"[[:space:]]*:[[:space:]]*\"(.*)\" ]]; then
+          text="${BASH_REMATCH[1]}"
+          echo "> $current_role: $text"
+        fi
+      done < "$JSON_FILE"
+    } > "$TMP_MD"
+    cat "$TMP_MD"
+    echo
+    echo "=== Démarrage d'une session interactive (continue '$NAME') ==="
+    exec script -q /dev/null -c "codex --project-doc \"$TMP_MD\""
+    ;;
+
+  rename)
+    OLD="$2" NEW="$3"
+    if [ -z "$OLD" ] || [ -z "$NEW" ]; then
+      usage; exit 1
+    fi
+    mv "$SESSION_DIR/$OLD" "$SESSION_DIR/$NEW" 2>/dev/null || { echo "Erreur: impossible de renommer."; exit 1; }
+    echo "Session renommée: '$OLD' → '$NEW'."
+    ;;
+
+  delete)
+    NAME="$2"
+    if [ -z "$NAME" ]; then usage; exit 1; fi
+    rm -rf "$SESSION_DIR/$NAME" 2>/dev/null || { echo "Erreur: impossible de supprimer."; exit 1; }
+    echo "Session '$NAME' supprimée."
+    ;;
+
+  duplicate)
+    SRC="$2" DST="$3"
+    if [ -z "$SRC" ] || [ -z "$DST" ]; then usage; exit 1; fi
+    cp -r "$SESSION_DIR/$SRC" "$SESSION_DIR/$DST" 2>/dev/null || { echo "Erreur: impossible de dupliquer."; exit 1; }
+    echo "Session '$SRC' dupliquée → '$DST'."
+    ;;
+  export)
+    # Export plugin code into a dedicated session
+    NAME="$2"
+    [ -z "$NAME" ] && NAME="$PLUGIN_SESSION"
+    TARGET="$SESSION_DIR/$NAME"
+    mkdir -p "$TARGET"
+    # Copy this script
+    SCPT_PATH="$(readlink -f "$0")"
+    cp "$SCPT_PATH" "$TARGET/chatgpt"
+    echo "Session d’export '$NAME' créée dans $TARGET, plugin copié."
+    exit 0
+    ;;
+
+  *)
+    usage
+    exit 1
+    ;;
+esac
