@@ -53,6 +53,30 @@ Ce script :
   - Configure votre clé OpenAI dans `~/.codex-wrapper/.env`
   - Met à jour votre `~/.bash_profile` ou `~/.zshrc`
 
+### Linux
+Vous pouvez également utiliser ce wrapper sur la plupart des distributions Linux :
+```bash
+# Clonez le dépôt
+git clone git@github.com:Schonauban/TermuxCodexWrapper.git ~/.shortcuts
+
+# Installez Node.js, npm et git (Debian/Ubuntu)
+sudo apt update && sudo apt install -y nodejs npm git curl
+
+# Installez le CLI Codex
+npm install -g @openai/codex
+
+# Préparez le wrapper
+chmod +x ~/.shortcuts/chatgpt
+mkdir -p ~/bin
+ln -sf ~/.shortcuts/chatgpt ~/bin/chatgpt
+
+# Configurez votre clé API
+bash ~/.shortcuts/install.sh
+
+# Rechargez votre shell
+source ~/.bashrc  # ou ~/.zshrc
+```
+
  ## Pousser sur votre dépôt Git
 
  Après avoir cloné et personnalisé **TermuxCodexWrapper** :
