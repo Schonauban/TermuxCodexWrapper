@@ -39,21 +39,7 @@ ln -sf "$SCRIPT_SRC" "$WRAPPER_DIR/chatgpt"
 if [ ! -d "$HOME/bin" ]; then mkdir -p "$HOME/bin"; fi
 ln -sf "$WRAPPER_DIR/chatgpt" "$HOME/bin/chatgpt"
 
-# Clé API OpenAI
-ENV_FILE="$WRAPPER_DIR/.env"
-read -p "Entrez votre clé OpenAI (sera stockée dans $ENV_FILE): " api_key
-cat > "$ENV_FILE" <<EOF
-export OPENAI_API_KEY=$api_key
-EOF
-chmod 600 "$ENV_FILE"
-
-# Ajouter sourcing dans shell rc
-SHELL_RC="$HOME/.bash_profile"
-[ -f "$HOME/.zshrc" ] && SHELL_RC="$HOME/.zshrc"
-if ! grep -q "codex-wrapper" "$SHELL_RC"; then
-  echo "source $ENV_FILE  # codex-wrapper" >> "$SHELL_RC"
-  echo "Ajouté '$ENV_FILE' à $SHELL_RC"
-fi
+## Note: API key will be requested by Codex CLI on first usage
 
 echo "Installation terminée."
 echo "Relancez votre terminal ou exécutez: source $SHELL_RC"

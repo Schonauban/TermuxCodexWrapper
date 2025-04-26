@@ -60,12 +60,7 @@
    ```bash
    source ~/.bash_profile  # ou ~/.zshrc
    ```
-Ce script :
-  - Installe Homebrew, Node.js et le CLI Codex
-  - Crée un dossier `~/.codex-wrapper` et copie le script
-  - Ajoute un raccourci dans `~/bin/chatgpt`
-  # Configuration de la clé API OpenAI se fait automatiquement au premier lancement de Codex.
-  - Met à jour votre `~/.bash_profile` ou `~/.zshrc`
+Note : l’API Key sera demandée automatiquement par le CLI Codex lors du premier lancement.
 
 ### Linux
 Vous pouvez également utiliser ce wrapper sur la plupart des distributions Linux :
