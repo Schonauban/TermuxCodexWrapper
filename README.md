@@ -13,13 +13,10 @@
    ```bash
    chmod +x ~/.shortcuts/chatgpt
    ```
-3. Exécutez l'installateur Termux pour installer les dépendances et configurer votre clé API :
+3. Exécutez l'installateur Termux pour installer les dépendances :
    ```bash
    bash ~/.shortcuts/install.sh
    ```
-    - Ce script vous demandera votre **OpenAI API Key**
-    - Il la stockera dans `~/.shortcuts/.env` (ignoré par Git)
-    - Il ajoutera également l’export dans votre `~/.bashrc` pour chargement automatique
  4. Rechargez votre configuration shell :
     ```bash
     source ~/.bashrc
@@ -67,7 +64,7 @@ Ce script :
   - Installe Homebrew, Node.js et le CLI Codex
   - Crée un dossier `~/.codex-wrapper` et copie le script
   - Ajoute un raccourci dans `~/bin/chatgpt`
-  - Configure votre clé OpenAI dans `~/.codex-wrapper/.env`
+  # Configuration de la clé API OpenAI se fait automatiquement au premier lancement de Codex.
   - Met à jour votre `~/.bash_profile` ou `~/.zshrc`
 
 ### Linux
@@ -88,7 +85,7 @@ chmod +x ~/.TermuxCodexWrapper/chatgpt
 mkdir -p ~/bin
 ln -sf ~/.TermuxCodexWrapper/chatgpt ~/bin/chatgpt
 
-# Configurez votre clé API et installez dépendances
+# Installez les dépendances
 bash ~/.TermuxCodexWrapper/install.sh
 
 # Rechargez votre shell
@@ -105,4 +102,4 @@ source ~/.bashrc  # ou ~/.zshrc
  git push -u origin main
  ```
 
- **Attention** : ne commitez **jamais** votre clé OpenAI. Le fichier `.env` est ignoré par Git.
+**Attention** : ne commitez **jamais** votre clé OpenAI dans un dépôt public.
