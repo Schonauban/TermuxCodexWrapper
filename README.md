@@ -4,18 +4,16 @@
 
  ## Installation
 
- 1. Clonez ce dépôt **TermuxCodexWrapper** dans votre répertoire Termux shortcuts :
-    ```bash
-    git clone git@github.com:VOTRE_UTILISATEUR/TermuxCodexWrapper.git ~/.shortcuts
-    ```
-2. Rendez le script principal exécutable et ajoutez-le à votre PATH :
+1. **Sur Termux (Android)**
+   Clonez ce dépôt dans votre répertoire Termux shortcuts :
+   ```bash
+   git clone https://github.com/Schonauban/TermuxCodexWrapper.git ~/.shortcuts
+   ```
+2. Rendez le script principal exécutable :
    ```bash
    chmod +x ~/.shortcuts/chatgpt
-   # Sur Linux/macOS
-   mkdir -p ~/bin
-   ln -sf ~/.shortcuts/chatgpt ~/bin/chatgpt
    ```
-3. Lancez l'installateur pour configurer votre clé API et installer les dépendances :
+3. Exécutez l'installateur Termux pour installer les dépendances et configurer votre clé API :
    ```bash
    bash ~/.shortcuts/install.sh
    ```
@@ -48,11 +46,23 @@
  chatgpt export [NOM]        # Exporte le script dans une session dédiée
  ```
   
-### macOS
-Pour installer la version macOS :
-```bash
-bash ~/.shortcuts/install_macos.sh
-```
+#### Sur macOS
+1. Clonez ce dépôt dans `~/.TermuxCodexWrapper` :
+   ```bash
+   git clone https://github.com/Schonauban/TermuxCodexWrapper.git ~/.TermuxCodexWrapper
+   ```
+2. Rendez l’installateur macOS exécutable :
+   ```bash
+   chmod +x ~/.TermuxCodexWrapper/install_macos.sh
+   ```
+3. Exécutez l’installateur macOS :
+   ```bash
+   bash ~/.TermuxCodexWrapper/install_macos.sh
+   ```
+4. Relancez votre terminal ou exécutez :
+   ```bash
+   source ~/.bash_profile  # ou ~/.zshrc
+   ```
 Ce script :
   - Installe Homebrew, Node.js et le CLI Codex
   - Crée un dossier `~/.codex-wrapper` et copie le script
@@ -62,9 +72,10 @@ Ce script :
 
 ### Linux
 Vous pouvez également utiliser ce wrapper sur la plupart des distributions Linux :
-```bash
-# Clonez le dépôt
 git clone git@github.com:Schonauban/TermuxCodexWrapper.git ~/.shortcuts
+```bash
+# Clonez le dépôt dans ~/.TermuxCodexWrapper
+git clone https://github.com/Schonauban/TermuxCodexWrapper.git ~/.TermuxCodexWrapper
 
 # Installez Node.js, npm et git (Debian/Ubuntu)
 sudo apt update && sudo apt install -y nodejs npm git curl
@@ -73,12 +84,12 @@ sudo apt update && sudo apt install -y nodejs npm git curl
 npm install -g @openai/codex
 
 # Préparez le wrapper
-chmod +x ~/.shortcuts/chatgpt
+chmod +x ~/.TermuxCodexWrapper/chatgpt
 mkdir -p ~/bin
-ln -sf ~/.shortcuts/chatgpt ~/bin/chatgpt
+ln -sf ~/.TermuxCodexWrapper/chatgpt ~/bin/chatgpt
 
-# Configurez votre clé API
-bash ~/.shortcuts/install.sh
+# Configurez votre clé API et installez dépendances
+bash ~/.TermuxCodexWrapper/install.sh
 
 # Rechargez votre shell
 source ~/.bashrc  # ou ~/.zshrc
