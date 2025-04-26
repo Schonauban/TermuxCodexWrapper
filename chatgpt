@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/env bash
+#!/usr/bin/env bash
 # Wrapper for managing Codex chat sessions
 # Load environment for API key
 # Load shell configuration
@@ -29,11 +29,18 @@ mkdir -p "$SESSION_DIR"
 # Plugin session variable (used by export command)
 PLUGIN_SESSION="codexsessionplugin.v1"
 
-# Interactive menu when no arguments are provided
+## Interactive menu when no arguments are provided
 function interactive_menu() {
   while true; do
     # Build list of existing sessions
-    mapfile -t sessions < <(ls -1 "$SESSION_DIR" 2>/dev/null)
+    sessions=()
+    if command -v mapfile >/dev/null 2>&1; then
+      mapfile -t sessions < <(ls -1 "$SESSION_DIR" 2>/dev/null)
+    else
+      while IFS= read -r s; do
+        sessions+=("$s")
+      done < <(ls -1 "$SESSION_DIR" 2>/dev/null)
+    fi
     echo "=== Gestion des sessions Codex ==="
     # List sessions numbered
     for i in "${!sessions[@]}"; do
@@ -91,11 +98,18 @@ function interactive_menu() {
 # Codex default sessions directory
 GLOBAL_SESS_DIR="$HOME/.codex/sessions"
 
-# Override interactive_menu to ensure updated session list and quit action
+## Override interactive_menu to ensure updated session list and quit action
 function interactive_menu() {
   while true; do
     # Build list of existing sessions
-    mapfile -t sessions < <(ls -1 "$SESSION_DIR" 2>/dev/null)
+    sessions=()
+    if command -v mapfile >/dev/null 2>&1; then
+      mapfile -t sessions < <(ls -1 "$SESSION_DIR" 2>/dev/null)
+    else
+      while IFS= read -r s; do
+        sessions+=("$s")
+      done < <(ls -1 "$SESSION_DIR" 2>/dev/null)
+    fi
     echo "=== Gestion des sessions Codex ==="
     # List sessions numbered
     for i in "${!sessions[@]}"; do
@@ -196,14 +210,30 @@ case "$1" in
     mkdir -p "$TARGET"
     # Record existing global sessions
     existing=()
-    [ -d "$GLOBAL_SESS_DIR" ] && mapfile -t existing < <(ls -A "$GLOBAL_SESS_DIR")
+    if [ -d "$GLOBAL_SESS_DIR" ]; then
+      if command -v mapfile >/dev/null 2>&1; then
+        mapfile -t existing < <(ls -A "$GLOBAL_SESS_DIR")
+      else
+        while IFS= read -r e; do
+          existing+=("$e")
+        done < <(ls -A "$GLOBAL_SESS_DIR")
+      fi
+    fi
 
     echo "Démarrage de la nouvelle session '$NAME'..."
     codex
 
     # Find new session file
     latest=()
-    [ -d "$GLOBAL_SESS_DIR" ] && mapfile -t latest < <(ls -A "$GLOBAL_SESS_DIR")
+    if [ -d "$GLOBAL_SESS_DIR" ]; then
+      if command -v mapfile >/dev/null 2>&1; then
+        mapfile -t latest < <(ls -A "$GLOBAL_SESS_DIR")
+      else
+        while IFS= read -r f; do
+          latest+=("$f")
+        done < <(ls -A "$GLOBAL_SESS_DIR")
+      fi
+    fi
     new_files=()
     for f in "${latest[@]}"; do
       found=0
